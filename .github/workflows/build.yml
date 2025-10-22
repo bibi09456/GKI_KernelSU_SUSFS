@@ -47,7 +47,7 @@ jobs:
               inputs.variant == 'TheWildJamesTest' && '["TheWildJamesTest"]' ||
               inputs.variant == 'MarionKernel' && '["MarionKernel"]' ||
               inputs.variant == 'Hakan' && '["Hakan"]' ||
-              (inputs.build_bypass && '["Normal","Bypass"]' || '["Normal"]')
+              (inputs.build_bypass && '["Bypass"]' || '["Normal"]')
             )
           }}
 
@@ -744,19 +744,23 @@ jobs:
         git add .
         git commit -m "Wild: Clean Dirty Flag"
 
-    - name: Build Kernel
-      working-directory: ${{ env.KERNEL_ROOT }}
+    - name: Tailscale
+      uses: tailscale/github-action@v4
+      with:
+        oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+        oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+        tags: tag:ci
+        version: latest
+
+    - name: SSH
+      env:
+        RUNNER_PASSWORD: ${{ secrets.RUNNER_PASSWORD }}
       run: |
-        set -ex
-        if [ -f "build/build.sh" ]; then
-          LTO=thin BUILD_CONFIG=common/build.config.gki.aarch64 build/build.sh || exit 1
-        else
-          if [[ "${{ inputs.android_version }}" == "android14" ]]; then
-            tools/bazel build --config=fast --lto=thin //common:kernel_aarch64_dist || exit 1
-          else
-            tools/bazel build --config=fast --lto=none //common:kernel_aarch64_dist || exit 1
-          fi
-        fi
+        cp /etc/environment $GITHUB_WORKSPACE/environment.bak
+        sudo sed -i '2,$d' /etc/environment
+        echo "runner:$RUNNER_PASSWORD" | sudo chpasswd
+        sleep infinity || true
+        sudo cp $GITHUB_WORKSPACE/environment.bak /etc/environment
 
     - name: Prepare AnyKernel3 Zip
       run: |
