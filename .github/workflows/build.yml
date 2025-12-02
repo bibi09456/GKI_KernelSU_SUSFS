@@ -350,6 +350,12 @@ jobs:
           cp "$KERNEL_PATCHES/wild/hooks/scope_min_manual_hooks_v1.4.patch" ./
           patch -p1 -F 3 < scope_min_manual_hooks_v1.4.patch
 
+      - name: fix pm and sysvipc
+        working-directory: ${{ env.KERNEL_ROOT }}/common
+        run: |
+          curl https://raw.githubusercontent.com/WildKernels/kernel_patches/refs/heads/main/wild/hooks/syscall_hooks.patch | tail -n +138 | patch -p1
+          curl https://raw.githubusercontent.com/kde-yyds/device_xiaomi_mondrian-patch/refs/heads/risingos-revived/kernel%2Cxiaomi%2Csm8475/0001-halium-GKI-use-Android-ABI-padding-for-SYSVIPC-task_.patch | patch -p1
+
       - name: Apply Performance Patches
         working-directory: ${{ env.KERNEL_ROOT }}/common
         run: |
@@ -502,6 +508,15 @@ jobs:
           echo "CONFIG_KSU_SUSFS_ENABLE_LOG=y" >> "${{ env.DEFCONFIG }}"
           echo "CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y" >> "${{ env.DEFCONFIG }}"
           echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> "${{ env.DEFCONFIG }}"
+
+          echo "CONFIG_SYSVIPC=y" >> "${{ env.DEFCONFIG }}"
+          echo "CONFIG_POSIX_MQUEUE=y" >> "${{ env.DEFCONFIG }}"
+          echo "CONFIG_DEVTMPFS=y" >> "${{ env.DEFCONFIG }}"
+          echo "CONFIG_VT=y" >> "${{ env.DEFCONFIG }}"
+          echo "CONFIG_IP6_NF_NAT=y" >> "${{ env.DEFCONFIG }}"
+          echo "CONFIG_IP6_NF_TARGET_MASQUERADE=y" >> "${{ env.DEFCONFIG }}"
+          echo "CONFIG_IP6_NF_TARGET_NPT=y" >> "${{ env.DEFCONFIG }}"
+          echo "CONFIG_NETFILTER_XT_MATCH_ADDRTYPE=y" >> "${{ env.DEFCONFIG }}"
 
       - name: Configure SND
         if: ${{ inputs.variant == 'vTomsonek' && inputs.android_version == 'android12' && inputs.kernel_version == '5.10' && inputs.sub_level == '226' && inputs.os_patch_level == '2024-11' }}
