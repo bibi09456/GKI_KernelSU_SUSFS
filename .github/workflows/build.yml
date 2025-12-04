@@ -339,6 +339,10 @@ jobs:
               fi
               ;;
             KSU)
+              if [[ "${{ inputs.android_version }}" == "android15" && "${{ inputs.kernel_version }}" == "6.6" && $ACTUAL_SUBLEVEL -le 58 ]]; then
+                cp $KERNEL_PATCHES/wild/susfs_fix_patches/v${SUSFS_VERSION}/fix_task_mmu.c.patch ./
+                patch -p1 < fix_task_mmu.c.patch
+              fi
               cd "$KERNEL_ROOT"
               ;;
           esac
