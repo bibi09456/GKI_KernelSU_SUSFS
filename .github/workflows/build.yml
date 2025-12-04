@@ -285,6 +285,12 @@ jobs:
             ;;
         esac
 
+        cd "$KERNEL_ROOT/common"
+        if [[ "${{ inputs.android_version }}" == "android15" && "${{ inputs.kernel_version }}" == "6.6" && $ACTUAL_SUBLEVEL -le 58 ]]; then
+          cp $KERNEL_PATCHES/wild/susfs_fix_patches/v1.5.12/fix_task_mmu.c.patch ./
+          patch -p1 < fix_task_mmu.c.patch || true
+        fi
+
         case "${{ inputs.ksu_variant }}" in
           KSU)
             if [[ "${{ inputs.android_version }}" == "android12" && "${{ inputs.kernel_version }}" == "5.10" && $ACTUAL_SUBLEVEL -le 209 ]] ||
