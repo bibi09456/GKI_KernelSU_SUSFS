@@ -731,6 +731,18 @@ jobs:
           perl -pi -e 's/^\s*"protected_exports_list"\s*:\s*"android\/abi_gki_protected_exports_aarch64",\s*$//;' ./common/BUILD.bazel
         fi
 
+    - name: use custom toolchain
+      run: |
+        sudo chmod 777 /mnt
+        cd /mnt
+        aria2c https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/mirror-goog-main-llvm-toolchain-source/clang-r584948.tar.gz
+        mkdir clang-r584948
+        tar -xvf linux-x86-mirror-goog-main-llvm-toolchain-source-clang-r584948.tar.gz -C clang-r584948
+
+    - name: set kcflags
+      run: |
+        sed -i 's/$(KCFLAGS)/-O3 -mcpu=cortex-a725 -mllvm -polly -mllvm -polly-run-inliner -mllvm -polly-ast-use-context -mllvm -polly-vectorizer=stripmine -mllvm -polly-invariant-load-hoisting -mllvm -polly-loopfusion-greedy -mllvm -polly-reschedule -mllvm -polly-postopts -mllvm -polly-num-threads=0 -mllvm -polly-omp-backend=LLVM -mllvm -polly-scheduling=dynamic -mllvm -polly-scheduling-chunksize=1 -Wno-error -w $(KCFLAGS)/g' "$KERNEL_ROOT/common/Makefile"
+
     - name: Setup upterm session
       uses: owenthereal/action-upterm@v1
       with:
