@@ -1,8 +1,8 @@
 name: Kernel Config - A15 6.6
 
 permissions:
-  contents: write  # Allow writing to repository contents
-  actions: write   # Allows triggering actions
+  contents: write # Allow writing to repository contents
+  actions: write # Allows triggering actions
 
 on:
   workflow_call:
@@ -21,8 +21,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - sub_level: "56"
-            os_patch_level: "2024-11"
+        - sub_level: "56"
+          os_patch_level: "2024-11"
     uses: ./.github/workflows/build.yml
     secrets: inherit
     with:
