@@ -26,6 +26,9 @@ on:
         description: "Build Bypass"
         type: boolean
         default: false
+      lindroid:
+        type: boolean
+        default: true
       # Build Selection
       build_a12_5_10:
         description: "Android 12 - 5.10"
@@ -118,6 +121,7 @@ jobs:
       ksu_variant: ${{ inputs.ksu_variant }}
       ksu_commit: ${{ inputs.ksu_commit }}
       build_bypass: ${{ inputs.build_bypass }}
+      lindroid: ${{ inputs.lindroid }}
 
   build-a16-6-12:
     if: inputs.build_a16_6_12

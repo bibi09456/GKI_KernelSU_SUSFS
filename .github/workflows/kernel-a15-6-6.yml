@@ -16,6 +16,9 @@ on:
       build_bypass:
         required: true
         type: boolean
+      lindroid:
+        required: true
+        type: string
 
 jobs:
   build-kernels-a15:
@@ -36,3 +39,4 @@ jobs:
       ksu_variant: ${{ inputs.ksu_variant }}
       ksu_commit: ${{ inputs.ksu_commit }}
       build_bypass: ${{ inputs.build_bypass }}
+      lindroid: ${{ inputs.lindroid }}
