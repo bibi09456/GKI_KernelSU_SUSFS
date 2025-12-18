@@ -22,6 +22,9 @@ on:
         type: string
         default: "pershoot"
         required: false
+      lindroid:
+        type: boolean
+        default: true
       # Build Selection
       build_a12_5_10:
         description: "Android 12 - 5.10"
@@ -104,6 +107,7 @@ jobs:
     with:
       ksu_variant: ${{ inputs.ksu_variant }}
       ksu_commit: ${{ inputs.ksu_commit }}
+      lindroid: ${{ inputs.lindroid }}
 
   build-a16-6-12:
     if: inputs.build_a16_6_12
