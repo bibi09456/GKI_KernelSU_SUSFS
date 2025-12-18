@@ -21,6 +21,9 @@ on:
         description: "KSU Commit (optional)"
         type: string
         required: false
+      lindroid:
+        type: boolean
+        default: true
 
       susfs_enabled:
         description: "Enable SUSFS"
@@ -141,6 +144,7 @@ jobs:
       ksu_variant: ${{ inputs.ksu_variant }}
       ksu_commit: ${{ inputs.ksu_commit }}
       susfs_enabled: ${{ inputs.susfs_enabled }}
+      lindroid: ${{ inputs.lindroid }}
 
   build-a16-6-12:
     if: inputs.build_a16_6_12

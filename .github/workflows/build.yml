@@ -31,6 +31,9 @@ on:
       ksu_commit:
         required: false
         type: string
+      lindroid:
+        required: false
+        type: string
 
 jobs:
   build-gki:
@@ -663,6 +666,40 @@ jobs:
         elif [[ "${{ inputs.android_version }}" == "android15" && "${{ inputs.kernel_version }}" == "6.6" ]]; then
           perl -i -pe 's/^(\s*)return 1$/$1print("Who Cares? Bypassing Now!")\n$1return 0/g if /if missing_symbols:/../return 1/' build/kernel/abi/check_buildtime_symbol_protection.py
         fi
+
+    - name: configure lindroid
+      if: inputs.lindroid == 'true'
+      working-directory: ${{ env.KERNEL_ROOT }}
+      run: |
+        cd "$KERNEL_ROOT/common"
+        curl https://raw.githubusercontent.com/kde-yyds/device_xiaomi_mondrian-patch/refs/heads/risingos-revived/kernel%2Cxiaomi%2Csm8475/0006-cgroup-fix-cgroup-prefix.patch | patch -p1
+        cat >> "${{ env.DEFCONFIG }}" << 'EOF'
+        # lindroid
+        CONFIG_PID_NS=y
+        CONFIG_CGROUP_DEVICE=y
+        CONFIG_USER_NS=y
+        CONFIG_CHECKPOINT_RESTORE=y
+        CONFIG_MACVLAN=y
+        CONFIG_NETFILTER_XT_TARGET_CHECKSUM=y
+        CONFIG_FHANDLE=y
+        CONFIG_UNIX_DIAG=y
+        CONFIG_PACKET_DIAG=y
+        CONFIG_NETLINK_DIAG=y
+        CONFIG_SECURITY_APPARMOR=y
+        CONFIG_DRM_LINDROID_EVDI=y
+        CONFIG_AUTOFS_FS=y
+        CONFIG_ISO9660_FS=y
+        CONFIG_JOLIET=y
+        CONFIG_ZISOFS=y
+        CONFIG_UDF_FS=y
+        CONFIG_SQUASHFS=y
+        CONFIG_SQUASHFS_XATTR=y
+        CONFIG_SQUASHFS_4K_DEVBLK_SIZE=y
+        EOF
+
+        git clone --recursive https://github.com/Linux-on-droid/lindroid-drm-loopback drivers/lindroid-drm
+        echo 'obj-$(CONFIG_DRM_LINDROID_EVDI) += lindroid-drm/' >> drivers/Makefile
+        sed -i '/endmenu/i\\nsource "drivers/lindroid-drm/Kconfig"' drivers/Kconfig
 
     - name: Append ashmem exports if missing
       if: ${{ inputs.android_version == 'android16' && inputs.kernel_version == '6.12' }} && false

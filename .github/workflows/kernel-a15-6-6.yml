@@ -16,6 +16,9 @@ on:
       susfs_enabled:
         required: true
         type: boolean
+      lindroid:
+        required: true
+        type: string
 
 jobs:
   build-kernels-a15:
@@ -36,4 +39,4 @@ jobs:
       ksu_variant: ${{ inputs.ksu_variant }}
       ksu_commit: ${{ inputs.ksu_commit }}
       susfs_enabled: ${{ inputs.susfs_enabled }}
-
+      lindroid: ${{ inputs.lindroid }}
