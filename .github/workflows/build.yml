@@ -549,6 +549,7 @@ jobs:
 
         CONFIG_KSU_SUSFS=y
         CONFIG_KSU_SUSFS_SUS_SU=n
+        CONFIG_KSU_SUSFS_SUS_PATH=n
 
         CONFIG_SYSVIPC=y
         CONFIG_POSIX_MQUEUE=y
