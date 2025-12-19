@@ -519,6 +519,7 @@ jobs:
         # KernelSU Configuration
         CONFIG_KSU=y
         CONFIG_KSU_SUSFS=y
+        CONFIG_KSU_SUSFS_SUS_PATH=n
 
         # Mountify Support
         CONFIG_TMPFS_XATTR=y
