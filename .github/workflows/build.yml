@@ -208,13 +208,20 @@ jobs:
           RKSU)
             curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/main/kernel/setup.sh" | bash -s main
             ;;
+          SukiSU)
+            curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash -s builtin
+            ;;
         esac
 
     - name: Clone & Apply SUSFS Patches for KernelSU Variants
       if: inputs.susfs_enabled == true
       run: |
         SUSFS_BRANCH="gki-${{ inputs.android_version }}-${{ inputs.kernel_version }}"
-        git clone https://gitlab.com/simonpunk/susfs4ksu.git -b "$SUSFS_BRANCH"
+        if [ "${{ inputs.ksu_variant }}" == "SukiSU" ]; then
+          git clone https://github.com/ShirkNeko/susfs4ksu.git -b "$SUSFS_BRANCH"
+        else
+          git clone https://gitlab.com/simonpunk/susfs4ksu.git -b "$SUSFS_BRANCH"
+        fi
         cd susfs4ksu
         TARGET="${{ inputs.android_version }}-${{ inputs.kernel_version }}"
         COMMIT=""
@@ -248,6 +255,10 @@ jobs:
             SUSFS_VERSION="2.0.0"
             echo "Not Needed"
             ;;
+          SukiSU)
+            SUSFS_VERSION="2.0.0"
+            echo "Not needed"
+            ;;
         esac
 
         cp "$SUSFS4KSU/kernel_patches/fs/"* "$KERNEL_ROOT/common/fs/"
@@ -280,6 +291,9 @@ jobs:
             cd "$KERNEL_ROOT/KernelSU"
             cp "$SUSFS4KSU/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch" .
             patch -p1 < 10_enable_susfs_for_ksu.patch
+            ;;
+          SukiSU)
+            echo "SukiSU already has susfs in the builtin branch"
             ;;
         esac
 
@@ -405,6 +419,15 @@ jobs:
               cp $KERNEL_PATCHES/ksu/susfs_fix_patches/v${SUSFS_VERSION}/fix_open.c.patch ./
               patch -p1 < fix_open.c.patch || true
               sed -i 's/i_uid_into_mnt(i_user_ns(inode), inode)/i_uid_into_mnt(inode->i_sb->s_user_ns, inode)/g' fs/susfs.c
+            fi
+            ;;
+          SukiSU)
+            if [[ "${{ inputs.android_version }}" == "android12" && "${{ inputs.kernel_version }}" == "5.10" && $ACTUAL_SUBLEVEL -le 209 ]] ||
+               [[ "${{ inputs.android_version }}" == "android13" && "${{ inputs.kernel_version }}" == "5.10" && "${{ inputs.os_patch_level }}" != "2024-05" && $ACTUAL_SUBLEVEL -le 209 ]] ||
+               [[ "${{ inputs.android_version }}" == "android13" && "${{ inputs.kernel_version }}" == "5.15" && "${{ inputs.os_patch_level }}" != "2024-05" && $ACTUAL_SUBLEVEL -le 148 ]] ||
+               [[ "${{ inputs.android_version }}" == "android14" && "${{ inputs.kernel_version }}" == "5.15" && "${{ inputs.os_patch_level }}" != "2024-05" && $ACTUAL_SUBLEVEL -le 148 ]] ||
+               [[ "${{ inputs.android_version }}" == "android14" && "${{ inputs.kernel_version }}" == "6.1" && "${{ inputs.os_patch_level }}" != "2024-05" && $ACTUAL_SUBLEVEL -le 75 ]]; then
+              sed -i -e 's/goto show_pad;/return 0;/' ./fs/proc/task_mmu.c
             fi
             ;;
         esac
