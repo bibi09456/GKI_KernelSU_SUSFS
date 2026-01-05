@@ -93,7 +93,7 @@ jobs:
         mkdir -p "$KERNEL_ROOT"
 
         cat >> $GITHUB_ENV << EOF
-        DEFCONFIG=$KERNEL_ROOT/common/arch/arm64/configs/gki_defconfig
+        DEFCONFIG=$KERNEL_ROOT/common/arch/arm64/configs/rodin_defconfig
         CONFIG=$CONFIG
         KERNEL_ROOT=$KERNEL_ROOT
         SUSFS4KSU=$GITHUB_WORKSPACE/susfs4ksu
@@ -120,6 +120,7 @@ jobs:
         FORMATTED_BRANCH="${{ inputs.android_version }}-${{ inputs.kernel_version }}-${{ inputs.os_patch_level }}"
 
         repo init -u https://android.googlesource.com/kernel/manifest -b common-${FORMATTED_BRANCH} --repo-rev=v2.16 --depth=1
+        git clone https://github.com/bibi09456/local_manifests --depth=1 -b mtk-test .repo/local_manifests
 
         REMOTE_BRANCH=$(git ls-remote https://android.googlesource.com/kernel/common ${FORMATTED_BRANCH})
         DEFAULT_MANIFEST_PATH=.repo/manifests/default.xml
@@ -506,7 +507,7 @@ jobs:
       working-directory: ${{ env.KERNEL_ROOT }}
       run: |
         curl -LSs https://github.com/vc-teahouse/Baseband-guard/raw/main/setup.sh | bash
-        echo "CONFIG_BBG=y" >> common/arch/arm64/configs/gki_defconfig
+        echo "CONFIG_BBG=y" >> common/arch/arm64/configs/rodin_defconfig
         sed -i '/^config LSM$/,/^help$/{ /^[[:space:]]*default/ { /baseband_guard/! s/lockdown/lockdown,baseband_guard/ } }' common/security/Kconfig
         sed -i '/snapuserd/a\	"e2fs",\n	"mtkdump64",\n	"aee_aedv",\n	"hal_mtkblackboximpl_default",' common/security/baseband-guard/baseband_guard.c
 
