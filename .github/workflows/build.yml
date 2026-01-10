@@ -433,6 +433,22 @@ jobs:
             ;;
           KSU)
             SUSFS_VERSION="2.0.0"
+            cd "$KERNEL_ROOT/common"
+            cp "$SUSFS4KSU/kernel_patches/fs/"* "$KERNEL_ROOT/common/fs/"
+            cp "$SUSFS4KSU/kernel_patches/include/linux/"* "$KERNEL_ROOT/common/include/linux/"
+            cp $SUSFS4KSU/kernel_patches/50_add_susfs_in_gki-${{ inputs.android_version }}-${{ inputs.kernel_version }}.patch ./
+            patch -p1 < 50_add_susfs_in_gki-${{ inputs.android_version }}-${{ inputs.kernel_version }}.patch || true
+
+            if [[ "${{ inputs.android_version }}" == "android15" && "${{ inputs.kernel_version }}" == "6.6" ]]; then
+              if [[ "$ACTUAL_SUBLEVEL" -ge 98 ]]; then
+                cp $KERNEL_PATCHES/wild/susfs_fix_patches/v${SUSFS_VERSION}/a15-6.6/base.c.patch ./
+                patch -p1 < base.c.patch
+              fi
+              if [[ "$ACTUAL_SUBLEVEL" -le 58 ]]; then
+                cp $KERNEL_PATCHES/wild/susfs_fix_patches/v${SUSFS_VERSION}/a15-6.6/task_mmu.c.patch ./
+                patch -p1 < task_mmu.c.patch
+              fi
+            fi
             cd "$KERNEL_ROOT/KernelSU"
             cp "$SUSFS4KSU/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch" .
             patch -p1 < 10_enable_susfs_for_ksu.patch
