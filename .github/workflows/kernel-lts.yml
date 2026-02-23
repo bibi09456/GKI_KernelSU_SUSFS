@@ -16,6 +16,9 @@ on:
       build_bypass:
         required: true
         type: boolean
+      lindroid:
+        required: true
+        type: string
 
 jobs:
   build-kernels-lts:
@@ -24,35 +27,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - android_version: "android12"
-            kernel_version: "5.10"
-            sub_level: "X"
-            os_patch_level: "lts"
-          - android_version: "android13"
-            kernel_version: "5.10"
-            sub_level: "X"
-            os_patch_level: "lts"
-          - android_version: "android13"
-            kernel_version: "5.15"
-            sub_level: "X"
-            os_patch_level: "lts"
-          - android_version: "android14"
-            kernel_version: "5.15"
-            sub_level: "X"
-            os_patch_level: "lts"
-          - android_version: "android14"
-            kernel_version: "6.1"
-            sub_level: "X"
-            os_patch_level: "lts"
           - android_version: "android15"
             kernel_version: "6.6"
             sub_level: "X"
             os_patch_level: "lts"
-          - android_version: "android16"
-            kernel_version: "6.12"
-            sub_level: "X"
-            os_patch_level: "lts"
-            variant: "A16-612"
 
     uses: ./.github/workflows/build.yml
     secrets: inherit
@@ -65,3 +43,4 @@ jobs:
       ksu_variant: ${{ inputs.ksu_variant }}
       ksu_commit: ${{ inputs.ksu_commit }}
       build_bypass: ${{ inputs.build_bypass }}
+      lindroid: ${{ inputs.lindroid }}

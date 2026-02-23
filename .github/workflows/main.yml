@@ -63,7 +63,7 @@ on:
         type: boolean
         default: true
       build_lts:
-        description: "Build All LTS Kernels"
+        description: "Build 6.6 LTS Kernel"
         type: boolean
         default: false
 
@@ -149,6 +149,7 @@ jobs:
       ksu_variant: ${{ inputs.ksu_variant }}
       ksu_commit: ${{ inputs.ksu_commit }}
       build_bypass: ${{ inputs.build_bypass }}
+      lindroid: ${{ inputs.lindroid }}
 
   rej:
     if: always()
