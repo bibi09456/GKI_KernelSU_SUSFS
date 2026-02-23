@@ -843,9 +843,9 @@ jobs:
       run: |
         sudo chmod 777 /mnt
         cd /mnt
-        aria2c https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/mirror-goog-main-llvm-toolchain-source/clang-r584948.tar.gz
-        mkdir clang-r584948
-        tar -xvf linux-x86-mirror-goog-main-llvm-toolchain-source-clang-r584948.tar.gz -C clang-r584948
+        aria2c https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/mirror-goog-main-llvm-toolchain-source/clang-r596125.tar.gz
+        mkdir clang-r596125
+        tar -xvf linux-x86-mirror-goog-main-llvm-toolchain-source-clang-r596125.tar.gz -C clang-r596125
 
     - name: set kcflags
       run: |
