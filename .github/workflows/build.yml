@@ -442,7 +442,7 @@ jobs:
             if [[ "${{ inputs.android_version }}" == "android15" && "${{ inputs.kernel_version }}" == "6.6" ]]; then
               if [[ "$ACTUAL_SUBLEVEL" -ge 98 ]]; then
                 cp $KERNEL_PATCHES/wild/susfs_fix_patches/v${SUSFS_VERSION}/a15-6.6/base.c.patch ./
-                patch -p1 < base.c.patch
+                patch -p1 < base.c.patch || true
               fi
               if [[ "$ACTUAL_SUBLEVEL" -le 58 ]]; then
                 cp $KERNEL_PATCHES/wild/susfs_fix_patches/v${SUSFS_VERSION}/a15-6.6/task_mmu.c.patch ./
